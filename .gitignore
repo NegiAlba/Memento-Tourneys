@@ -14,7 +14,7 @@
 
 # firebase secret
 
-/lib/firebase/secret/
+/lib/*.json
 
 # production
 /build
