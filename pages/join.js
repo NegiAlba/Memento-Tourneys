@@ -2,7 +2,7 @@ import Router from 'next/router';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 
-import initFirebase from './services/firebase';
+import initFirebase from '../lib/firebase';
 import { useState } from 'react';
 import Layout, { siteTitle } from '../components/layout';
 import Head from 'next/head';
