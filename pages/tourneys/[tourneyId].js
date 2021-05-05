@@ -1,21 +1,25 @@
-import { Box } from '@chakra-ui/react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
-import {  getAllGames, getAllTourneys } from '@lib/db-admin'
+import { Box, FormControl, FormLabel, Input, Button } from '@chakra-ui/react'
+import Tourney from '@/components/Tourney'
+import { useAuth } from '@/lib/auth'
+import { createTourney } from '@/lib/db'
+import { getAllTourneys, getAllGames } from '@/lib/db-admin'
 export async function getStaticProps(context) {
-  const tourneyId = context.params.tourneyId
-  const { games } = await getAllGames(tourneyId)
+  const siteId = context.params.siteId
+  const { feedback } = await getAllFeedback(siteId)
   return {
     props: {
-      initialGames: games,
+      initialFeedback: feedback,
     },
     revalidate: 1,
   }
 }
 export async function getStaticPaths() {
-  const { tourneys } = await getAllTourneys()
-  const paths = tourneys.map((tourney) => ({
+  const { sites } = await getAllSites()
+  const paths = sites.map((site) => ({
     params: {
-      tourneyId: tourney.id.toString(),
+      siteId: site.id.toString(),
     },
   }))
   return {
@@ -23,9 +27,56 @@ export async function getStaticPaths() {
     fallback: true,
   }
 }
-
-const GamesPage = ({ initialGames }) => {
+const FeedbackPage = ({ initialFeedback }) => {
+  const auth = useAuth()
   const router = useRouter()
-  return <Box>Tourney ID: ${router.query.tourneyId}</Box>
+  const inputEl = useRef(null)
+  const [allFeedback, setAllFeedback] = useState([])
+  useEffect(() => {
+    setAllFeedback(initialFeedback)
+  }, [initialFeedback])
+  const onSubmit = (e) => {
+    e.preventDefault()
+    const newFeedback = {
+      author: auth.user.name,
+      authorId: auth.user.uid,
+      siteId: router.query.siteId,
+      text: inputEl.current.value,
+      createdAt: new Date().toISOString(),
+      provider: auth.user.provider,
+      status: 'pending',
+    }
+    inputEl.current.value = ''
+    setAllFeedback((currentFeedback) => [newFeedback, ...currentFeedback])
+    createFeedback(newFeedback)
+  }
+  return (
+    <Box
+      display="flex"
+      flexDirection="column"
+      width="full"
+      maxWidth="700px"
+      margin="0 auto"
+    >
+      {auth.user && (
+        <Box as="form" onSubmit={onSubmit}>
+          <FormControl my={8}>
+            <FormLabel htmlFor="comment">Comment</FormLabel>
+            <Input ref={inputEl} id="comment" placeholder="Leave a comment" />
+            <Button mt={4} type="submit" fontWeight="medium">
+              Add Comment
+            </Button>
+          </FormControl>
+        </Box>
+      )}
+      {allFeedback &&
+        allFeedback.map((feedback) => (
+          <Feedback
+            key={feedback.id || new Date().getTime().toString()}
+            {...feedback}
+          />
+        ))}
+    </Box>
+  )
 }
-export default GamesPage
+export default FeedbackPage

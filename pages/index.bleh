@@ -18,11 +18,9 @@ export default function Index() {
         <Button onClick={(e) => auth.signout()}>Sign Out</Button>
     </Layout>
   ) : (
-    <Layout>
-      <Stack direction="row" spacing={4}>
-          <Button isLoading={auth.loading} loadingText="Connecting" colorScheme="blue" onClick={(e) => auth.signinWithGitHub()}>Sign In With GitHub</Button>
-          <Button isLoading={auth.loading} loadingText="Connecting" colorScheme="green" onClick={(e) => auth.signinWithGoogle()}>Sign In With Google</Button>
-      </Stack>
-    </Layout>
+    <Stack direction="row" spacing={4}>
+        <Button isLoading={auth.loading} loadingText="Connecting" colorScheme="blue" onClick={(e) => auth.signinWithGitHub()}>Sign In With GitHub</Button>
+        <Button isLoading={auth.loading} loadingText="Connecting" colorScheme="green" onClick={(e) => auth.signinWithGoogle()}>Sign In With Google</Button>
+    </Stack>
   )
 }

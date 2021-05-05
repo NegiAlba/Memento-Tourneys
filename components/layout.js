@@ -3,19 +3,19 @@ import Image from 'next/image'
 import styles from './layout.module.css'
 import utilStyles from '../styles/utils.module.css'
 import Link from 'next/link'
+import { Container, Text } from "@chakra-ui/react"
+import { DarkModeSwitch } from './DarkModeSwitch'
+import { useAuth } from '@/lib/auth'
 
 const name = 'Negi Alba'
-export const siteTitle = 'Memento Tourney\'s Website'
+export const siteTitle = 'Memento Tourney\'s'
 
 export default function Layout({ children, home }) {
+  const auth = useAuth();
   return (
-    <div className={styles.container}>
+    <Container>
       <Head>
         <link rel="icon" href="/favicon.ico" />
-        <meta
-          name="description"
-          content="Learn how to build a personal website using Next.js"
-        />
         <meta
           property="og:image"
           content={`https://og-image.vercel.app/${encodeURI(
@@ -30,39 +30,16 @@ export default function Layout({ children, home }) {
           />
       </Head>
       <header className={styles.header}>
-        {home ? (
-          <>
-            <Image
-              priority
-              src="/images/profile.jpg"
-              className={utilStyles.borderCircle}
-              height={144}
-              width={144}
-              alt={name}
-            />
-            <h1 className={utilStyles.heading2Xl}>{name}</h1>
-          </>
-        ) : (
-          <>
-            <Link href="/">
-              <a>
-                <Image
-                  priority
-                  src="/images/profile.jpg"
-                  className={utilStyles.borderCircle}
-                  height={108}
-                  width={108}
-                  alt={name}
-                />
-              </a>
-            </Link>
-            <h2 className={utilStyles.headingLg}>
-              <Link href="/">
-                <a className={utilStyles.colorInherit}>{name}</a>
-              </Link>
-            </h2>
-          </>
-        )}
+      <DarkModeSwitch mr={3}/>
+            <Text
+              bgGradient="linear(to-l, yellow.400,pink.200)"
+              bgClip="text"
+              fontSize="6xl"
+              fontWeight="extrabold"
+              mt="4rem"
+            >
+              Memento Tourney
+            </Text>
       </header>
       <main>{children}</main>
       {!home && (
@@ -72,6 +49,6 @@ export default function Layout({ children, home }) {
           </Link>
         </div>
       )}
-    </div>
+    </Container>
   )
 }
